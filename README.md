@@ -1,5 +1,5 @@
 # breakout
-## NAME
+## Haris Adnan
 
 
 DO NO FORK THIS REPOSITORY, clone it directly to your computer.
@@ -9,11 +9,11 @@ This project implements the game of Breakout.
 
 ### Timeline
 
-Start Date: 
+Start Date: 9th January 2022
 
 Finish Date: 
 
-Hours Spent:
+Hours Spent: 
 
 ### Resources Used
 
