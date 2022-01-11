@@ -39,7 +39,7 @@ Fairy Treasure stuck out to me because in this game, you can clearly see how the
 
  * Idea #1
 
-The ball will bounce depending on which part of the paddle it hits, the middle third causes the ball to bounce perpendicularly to the paddle, the left thirs reflects the ball to the left side(20 degrees) and the right third makes the ball reflect to the right(20 degrees).
+The ball will bounce depending on which part of the paddle it hits, the middle third causes the ball to bounce perpendicularly to the paddle, the left third reflects the ball to the left side(20 degrees) and the right third makes the ball reflect to the right(20 degrees).
 
 
  * Idea #2
@@ -54,7 +54,7 @@ The blocks will take multiple hits before getting destroyed. This number will de
 
  * Idea #2
 
-Some bigger blocks, when destroyed, will lead to a button falling down. If the paddle is able to touch this button, a certain number of points will be added to the players score.
+Some special blocks will give the player a big score addition.
 
  * Idea #3
 
@@ -65,13 +65,15 @@ Unless a block is on its last hit, the ball will reflect off of the blocks, and 
 
  * Idea #1
 
-This power up gives the player the abilty to shoot at the blocks. The gun is in the middle of the paddle
+This power up slows down the ball.
+
  * Idea #2
 
 This power up increases the length of the paddle. 
  * Idea #3
 
-This power up can either slow down the movemement of the paddle or increase it. The chances of the power up leading to a speedup will be more than a slowdown.
+This power up slows down the paddle
+
 ## Cheat Key Ideas
 
  * Idea #1
@@ -83,7 +85,7 @@ This cheat code gives the player one extra life
 
  * Idea #3
 
-This cheat code will allow the player to fire multiple balls at once. Only one of these balls need to be in the user's screen for the user to not lose a life.
+This cheat code will pass the player onto the next round.
  * Idea #4
 
 This cheat code adds a certain number of points to the player's score
