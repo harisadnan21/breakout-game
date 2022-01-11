@@ -114,12 +114,45 @@ The numbers indicate the sizes of the blocks.
 
  * Idea #2
 
-(Alpha shape ordering, with smaller size of paddle, more powerups)
+
+Smaller size of paddle, and the speed of the ball is faster. The bigger blocks are surrounded by smaller blocks.
+
+1 1 5 5 1 1
+
+0 0 1 1 0 0
+
+0 1 2 2 1 0
+
+1 3 4 4 3 1
+
+0 1 2 2 1 0
+
+0 0 1 1 0 0
+
+0 0 0 0 0 0
+
+0 0 0 0 0 0
+
 
  * Idea #3
+5 0 0 0 0 5
 
-(Another pattern, with the negative power up and more obstacles.)
+1 1 3 3 1 1
 
+0 1 5 4 2 0
+
+2 3 2 3 2 2
+
+0 1 0 1 0 1
+
+1 0 1 0 1 0
+
+0 0 0 0 0 0
+
+0 0 0 0 0 0
+
+
+This level has more paddle slow down power ups. The level will have multiple "rocks", which are blocks that are similar to the normal ones, except they can't be broken and won't allow the ball to pass through.
 
 
 
@@ -127,9 +160,35 @@ The numbers indicate the sizes of the blocks.
 
  * Idea #1
 
+ powerups class.
+
+Method: paddleLength()
+
+
  * Idea #2
+
+Blocks Class
+
+Method: blockPositions()
+
+
 
  * Idea #3
 
+paddleClass
+
+Method: paddleMove()
+
+Method: paddleHit()
+
+
+
  * Idea #4
 
+mapClass
+
+Method: level1()
+
+Method: level2()
+
+Method: level3()
