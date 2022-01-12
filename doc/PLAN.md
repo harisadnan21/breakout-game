@@ -167,10 +167,9 @@ Method: paddleLength()
 
  * Idea #2
 
-Blocks Class
+runClass
 
-Method: blockPositions()
-
+Method: setupGame()
 
 
  * Idea #3
