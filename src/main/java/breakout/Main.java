@@ -16,7 +16,7 @@ import javafx.scene.shape.Circle;
 public class Main extends Application {
     // useful names for constant values used
     public static final String TITLE = "Example JavaFX Animation";
-    public static final int SIZE = 1000;
+    public static final int SIZE = 750;
 
 
     /**
@@ -24,7 +24,7 @@ public class Main extends Application {
      */
     @Override
     public void start (Stage stage) {
-        Circle shape = new Circle(500, 300, 14);
+        Circle shape = new Circle(SIZE / 2 , SIZE / 2, 14);
         shape.setFill(Color.LIGHTSTEELBLUE);
 
         Group root = new Group();
