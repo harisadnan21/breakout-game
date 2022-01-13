@@ -30,6 +30,7 @@ public class Main extends Application {
     private runClass myGame;
 
 
+
     /**
      * Initialize what will be displayed.
      */

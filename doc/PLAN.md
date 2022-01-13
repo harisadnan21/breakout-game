@@ -39,7 +39,7 @@ Fairy Treasure stuck out to me because in this game, you can clearly see how the
 
  * Idea #1
 
-The ball will bounce depending on which part of the paddle it hits, the middle third causes the ball to bounce perpendicularly to the paddle, the left third reflects the ball to the left side(20 degrees) and the right third makes the ball reflect to the right(20 degrees).
+The ball will bounce depending on which part of the paddle it hits, the middle third causes the ball to bounce perpendicularly to the paddle, the left third reflects the ball in the direction it came from and the right third makes the ball reflect back to the direction it came from.
 
 
  * Idea #2
