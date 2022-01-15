@@ -27,8 +27,8 @@ public class runClass {
     public static final String BOUNCER_IMAGE = RESOURCE_PATH + "img.png";
     public static final int BOUNCER_SIZE = 40;
     public static int BOUNCER_SPEED = 50;
-    public static int BOUNCER_CONSTANT_X = 7;
-    public static int BOUNCER_CONSTANT_Y = 10;
+    public static int BOUNCER_CONSTANT_X = 2;
+    public static int BOUNCER_CONSTANT_Y = 4;
     public static final Paint MOVER_COLOR = Color.CORNFLOWERBLUE;
     public static int MOVER_SIZE = 50;
     public static final int MOVER_SPEED = 8;
@@ -45,8 +45,9 @@ public class runClass {
     private Rectangle myMover;
     private Rectangle myGrower;
     private Rectangle myPaddle;
-    private int directionX = 1;
-    private int directionY = 1;
+    private int directionX;
+    private int directionY;
+
 
     public Scene setupGame(int width, int height, Paint background) {
         // create one top level collection to organize the things in the scene
@@ -62,15 +63,15 @@ public class runClass {
         int n1y = rand.nextInt(Main.SIZE);
         int n2x = rand.nextInt(Main.SIZE);
         int n2y = rand.nextInt(Main.SIZE);
-        myBouncer.setX(Main.SIZE / 2 - myBouncer.getBoundsInLocal().getWidth() / 2);
-        myBouncer.setY(Main.SIZE / 2 - myBouncer.getBoundsInLocal().getHeight() / 2);
+        myBouncer.setX(Main.SIZE / 2.0 - myBouncer.getBoundsInLocal().getWidth() / 2);
+        myBouncer.setY(Main.SIZE / 2.0 - myBouncer.getBoundsInLocal().getHeight() / 2);
         // make some shapes and set their properties
         myMover = new Rectangle(n1x, n1y, MOVER_SIZE, MOVER_SIZE);
         myMover.setFill(MOVER_COLOR);
         myGrower = new Rectangle(n2x, n2y, GROWER_SIZE, GROWER_SIZE);
         myGrower.setFill(GROWER_COLOR);
         // ADDING PADDLE
-        myPaddle = new Rectangle(width / 2 - PADDLE_SIZE / 2, height - 50, PADDLE_SIZE, PADDLE_SIZE / 5);
+        myPaddle = new Rectangle(width / 2.0 - PADDLE_SIZE / 2.0, height - 50, PADDLE_SIZE, PADDLE_SIZE / 5.0);
         myPaddle.setFill(PADDLE_COLOR);
 
         // order added to the group is the order in which they are drawn
@@ -89,20 +90,13 @@ public class runClass {
 
     public void step(double elapsedTime) {
 
-        // update "actors" attributes
-        // bouncer moves at a "constant" rate now matter how many frames are drawn per second
 
         myBouncer.setX(myBouncer.getX() + BOUNCER_SPEED * elapsedTime * directionX * BOUNCER_CONSTANT_X);
         myBouncer.setY(myBouncer.getY() + BOUNCER_SPEED * elapsedTime * directionY * BOUNCER_CONSTANT_Y);
 
-        // shapes move at a "variable" rate, faster for higher frame rate
-        //myMover.setRotate(myMover.getRotate() - 1);
-        //myGrower.setRotate(myGrower.getRotate() + 1);
-
-
+        System.out.println("workinng");
         if (myBouncer.getX() <= 0 || myBouncer.getX() >= Main.SIZE - myBouncer.getFitWidth()) {
             directionX = -1 * directionX;
-
         }
         if (myBouncer.getY() <= 0 || myBouncer.getY() >= Main.SIZE - myBouncer.getFitHeight()) {
             directionY = -1 * directionY;
@@ -111,23 +105,12 @@ public class runClass {
 
         // check for collisions
         if (isIntersecting(myBouncer, myMover)) {
-
-            //Hit from above or below
-//            if((myBouncer.getY() <= myMover.getY() - (myMover.getY()/2)) || ((myBouncer.getY() >= myMover.getY() + (myMover.getY()/2)))){
-//                directionY = -1 * directionY;
-//            }
-//
-//
-//            //Hit was on left
-//            if(myBouncer.getX() < myMover.getX() || myBouncer.getX() > myMover.getX()){
-//                directionX = -directionX;
-//            }
-
             if (myBouncer.getX() >= myMover.getX() || myBouncer.getX() <= myMover.getX() + MOVER_SIZE) {
                 directionX = -1 * directionX;
             } else if (myBouncer.getY() >= myMover.getY() || myBouncer.getY() <= myMover.getY() + MOVER_SIZE) {
                 directionY = -1 * directionY;
             }
+
         }
 //        else {
 //            myMover.setFill(MOVER_COLOR);
@@ -147,8 +130,6 @@ public class runClass {
 //            myGrower.setScaleX(1);
 //            myGrower.setScaleY(1);
             // ADD IMPLEMENTATION FOR HOW THE BALL REFLECTS DEPENDING ON WHERE IT HITS THE PADDLE
-
-
             directionY = -1 * directionY;
 
         }
