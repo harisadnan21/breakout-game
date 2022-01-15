@@ -27,8 +27,8 @@ public class runClass {
     public static final String BOUNCER_IMAGE = RESOURCE_PATH + "img.png";
     public static final int BOUNCER_SIZE = 40;
     public static int BOUNCER_SPEED = 50;
-    public static int BOUNCER_CONSTANT_X = 2;
-    public static int BOUNCER_CONSTANT_Y = 4;
+    public static int BOUNCER_CONSTANT_X = 5;
+    public static int BOUNCER_CONSTANT_Y = 7;
     public static final Paint MOVER_COLOR = Color.CORNFLOWERBLUE;
     public static int MOVER_SIZE = 50;
     public static final int MOVER_SPEED = 8;
@@ -39,9 +39,8 @@ public class runClass {
     public static final Paint PADDLE_COLOR = Color.SEAGREEN;
     public static final int PADDLE_SIZE = 70;
     public static final int PADDLE_SPEED = 20;
-
-
     private ImageView myBouncer;
+    //private MainScreen screen1;
     private Rectangle myMover;
     private Rectangle myGrower;
     private Rectangle myPaddle;
@@ -50,14 +49,13 @@ public class runClass {
 
 
     public Scene setupGame(int width, int height, Paint background) {
-        // create one top level collection to organize the things in the scene
+        directionX = 1;
+        directionY = 1;
         Group root = new Group();
-        // make an image based on a file "resource" found using Java's classpath
         Image image = new Image(getClass().getResourceAsStream(BOUNCER_IMAGE));
         myBouncer = new ImageView(image);
         myBouncer.setFitWidth(BOUNCER_SIZE);
         myBouncer.setFitHeight(BOUNCER_SIZE);
-        // x and y represent the top left corner, so center it in window by offsetting by the width nd height
         Random rand = new Random();
         int n1x = rand.nextInt(Main.SIZE);
         int n1y = rand.nextInt(Main.SIZE);
@@ -94,44 +92,60 @@ public class runClass {
         myBouncer.setX(myBouncer.getX() + BOUNCER_SPEED * elapsedTime * directionX * BOUNCER_CONSTANT_X);
         myBouncer.setY(myBouncer.getY() + BOUNCER_SPEED * elapsedTime * directionY * BOUNCER_CONSTANT_Y);
 
-        System.out.println("workinng");
+       
         if (myBouncer.getX() <= 0 || myBouncer.getX() >= Main.SIZE - myBouncer.getFitWidth()) {
             directionX = -1 * directionX;
         }
         if (myBouncer.getY() <= 0 || myBouncer.getY() >= Main.SIZE - myBouncer.getFitHeight()) {
             directionY = -1 * directionY;
         }
-        // myMover.setFill(HIGHLIGHT);
 
         // check for collisions
         if (isIntersecting(myBouncer, myMover)) {
-            if (myBouncer.getX() >= myMover.getX() || myBouncer.getX() <= myMover.getX() + MOVER_SIZE) {
-                directionX = -1 * directionX;
-            } else if (myBouncer.getY() >= myMover.getY() || myBouncer.getY() <= myMover.getY() + MOVER_SIZE) {
-                directionY = -1 * directionY;
+            if (myBouncer.getX() + BOUNCER_SIZE/2 < myMover.getX()){
+                directionX = -1;
+            }
+//intersects from right
+            else if (myBouncer.getX() + BOUNCER_SIZE/2 > myMover.getX() + MOVER_SIZE) {
+                directionX = 1;
+            }
+//intersects from top
+            else if (myBouncer.getY() + BOUNCER_SIZE/2 < myMover.getY()){
+                directionY = -1;
+            }
+//intersects from the bottom
+            else if (myBouncer.getY() + BOUNCER_SIZE/2 > myMover.getY() + MOVER_SIZE) {
+                directionY = 1;
             }
 
         }
-//        else {
-//            myMover.setFill(MOVER_COLOR);
-//        }
+//
+
         if (isIntersecting(myBouncer, myGrower)) {
 //            myGrower.setScaleX(1);
 //            myGrower.setScaleY(1);
-            if (myBouncer.getX() >= myGrower.getX() || myBouncer.getX() <= myGrower.getX() + MOVER_SIZE) {
-                directionX = -1 * directionX;
-            } else if (myBouncer.getY() >= myGrower.getY() || myBouncer.getY() <= myGrower.getY() + MOVER_SIZE) {
-                directionY = -1 * directionY;
+            if (myBouncer.getX() + BOUNCER_SIZE/2 < myGrower.getX()){
+                directionX = -1;
             }
-
-
+//intersects from right
+            else if (myBouncer.getX() + BOUNCER_SIZE/2 > myGrower.getX() + GROWER_SIZE) {
+                directionX = 1;
+            }
+//intersects from top
+            else if (myBouncer.getY() + BOUNCER_SIZE/2 < myGrower.getY()){
+                directionY = -1;
+            }
+//intersects from the bottom
+            else if (myBouncer.getY() + BOUNCER_SIZE/2 > myGrower.getY() + GROWER_SIZE) {
+                directionY = 1;
+            }
         }
+
         if (isIntersecting(myBouncer, myPaddle)) {
 //            myGrower.setScaleX(1);
 //            myGrower.setScaleY(1);
             // ADD IMPLEMENTATION FOR HOW THE BALL REFLECTS DEPENDING ON WHERE IT HITS THE PADDLE
             directionY = -1 * directionY;
-
         }
 
 
