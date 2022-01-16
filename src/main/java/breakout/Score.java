@@ -28,6 +28,9 @@ public class Score {
         scoretext.setText(String.valueOf(addition + Integer.parseInt(scoretext.getText())));
     }
 
+    public static void updateLives(Text numberoflives){
+        numberoflives.setText(String.valueOf(Integer.parseInt(numberoflives.getText()) -1));
+    }
 
 
 }

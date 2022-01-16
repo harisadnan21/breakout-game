@@ -47,7 +47,9 @@ public class runClass {
     private int directionX;
     private int directionY;
     private int score;
-    public static Text text2;
+    public static Text scorenumber;
+    public static Text livesremaining;
+    private int lives;
 
 
     public Scene setupGame(int width, int height, Paint background) {
@@ -75,12 +77,15 @@ public class runClass {
         myPaddle = new Rectangle(width / 2.0 - PADDLE_LENGTH / 2.0, height - 50, PADDLE_LENGTH, PADDLE_WIDTH);
         myPaddle.setFill(PADDLE_COLOR);
         //ADDING SCORE
-        Text text1 = new Text(10, 20, "SCORE:");
-        text1.setFill(Color.DARKRED);
-        text1.setFont(new Font(20));
-        text2 = new Text(100, 20, String.valueOf(score));
-        text2.setFill(Color.DARKRED);
-        text2.setFont(new Font(20));
+        Text scorestring = new Text(10, 20, "SCORE:");
+        scorestring.setFill(Color.DARKRED);
+        scorestring.setFont(new Font(20));
+        scorenumber = new Text(100, 20, String.valueOf(score));
+        scorenumber.setFill(Color.DARKRED);
+        scorenumber.setFont(new Font(20));
+        //ADDING LIVES
+        lives = 3;
+        livesremaining = new Text(10 , 50 , String.valueOf(lives));
         //text.setText("The quick brown fox jumps over the lazy dog");
 
 
@@ -89,8 +94,9 @@ public class runClass {
         root.getChildren().add(myMover);
         root.getChildren().add(myGrower);
         root.getChildren().add(myPaddle);
-        root.getChildren().add(text1);
-        root.getChildren().add(text2);
+        root.getChildren().add(scorestring);
+        root.getChildren().add(scorenumber);
+        root.getChildren().add(livesremaining);
 
         // create a place to see the shapes
         Scene scene = new Scene(root, width, height, background);
@@ -111,26 +117,29 @@ public class runClass {
             directionX = -1 * directionX;
         }
         if (myBouncer.getY() <= 0 || myBouncer.getY() >= Main.SIZE - myBouncer.getFitHeight()) {
+            if(myBouncer.getY() >= Main.SIZE - myBouncer.getFitHeight()){
+                Score.updateLives(livesremaining);
+            }
             directionY = -1 * directionY;
         }
 
         // check for collisions
         if (isIntersecting(myBouncer, myMover)) {
-            bounceBallBrick(myBouncer, myMover);
-            Score.updateScore(text2, 50);
+            bounceBallBricks(myBouncer, myMover);
+            Score.updateScore(scorenumber, 50);
         }
         if (isIntersecting(myBouncer, myGrower)) {
 //            myGrower.setScaleX(1);
 //            myGrower.setScaleY(1);
-            bounceBallBrick(myBouncer, myGrower);
-            Score.updateScore(text2, 100);
+            bounceBallBricks(myBouncer, myGrower);
+            Score.updateScore(scorenumber, 100);
         }
 
         if (isIntersecting(myBouncer, myPaddle)) {
 //            myGrower.setScaleX(1);
 //            myGrower.setScaleY(1);
             // ADD IMPLEMENTATION FOR HOW THE BALL REFLECTS DEPENDING ON WHERE IT HITS THE PADDLE
-            bounceBallPaddle2(myBouncer, myPaddle);
+            bounceBallBricks(myBouncer, myPaddle);
         }
     }
 
@@ -169,52 +178,52 @@ public class runClass {
 //                                       a.getFitWidth() / 2 - BOUNCER_SIZE / 20);
 //        return ! Shape.intersect(bouncerBounds, b).getBoundsInLocal().isEmpty();
     }
-    private void bounceBallBrick(ImageView ball, Rectangle brick){
-        //intersects from left
-        if (ball.getX() + brick.getWidth()/2 < brick.getX()){
-            directionX = -1;
-        }
-        //intersects from right
-        else if (ball.getX() + brick.getWidth()/2 > brick.getX() + brick.getWidth()) {
-            directionX = 1;
-        }
-        //intersects from top
-        else if (ball.getY() + brick.getHeight()/2 < brick.getY()){
-            directionY = -1;
-        }
-        //intersects from the bottom
-        else if (ball.getY() + brick.getHeight()/2 > brick.getY() + brick.getHeight()) {
-            directionY = 1;
-        }
+//    private void bounceBallBrick(ImageView ball, Rectangle brick){
+//        //intersects from left
+//        if (ball.getX() + brick.getWidth()/2 < brick.getX()){
+//            directionX = -1;
+//        }
+//        //intersects from right
+//        else if (ball.getX() + brick.getWidth()/2 > brick.getX() + brick.getWidth()) {
+//            directionX = 1;
+//        }
+//        //intersects from top
+//        else if (ball.getY() + brick.getHeight()/2 < brick.getY()){
+//            directionY = -1;
+//        }
+//        //intersects from the bottom
+//        else if (ball.getY() + brick.getHeight()/2 > brick.getY() + brick.getHeight()) {
+//            directionY = 1;
+//        }
 
-    }
-    private void bounceBallPaddle(ImageView ball, Rectangle brick){
-        //intersects from left
-        if (ball.getX() + brick.getWidth()/2 < brick.getX()){
-            directionX = -1;
-        }
-        //intersects from right
-        else if (ball.getX() + brick.getWidth()/2 > brick.getX() + brick.getWidth()) {
-            directionX = 1;
-        }
-        //intersects from top
-        else if (ball.getY() + brick.getHeight()/2 < brick.getY()){
-            // if ball hits left third
-            if (ball.getX() + ball.getFitWidth()< brick.getX() + brick.getWidth() / 3){
-                directionX = -1;
-            }
-            //if ball hits right third
-            if(ball.getX() + ball.getFitWidth()>brick.getX() + 2* (brick.getWidth() / 3)){
-                directionX = 1;
-            }
-            directionY = -1;
-        }
-        //intersects from the bottom
-        else if (ball.getY() + brick.getHeight()/2 > brick.getY() + brick.getHeight()) {
-            directionY = 1;
-        }
-    }
-    private void bounceBallPaddle2(ImageView ball, Rectangle brick){
+   // }
+//    private void bounceBallPaddle(ImageView ball, Rectangle brick){
+//        //intersects from left
+//        if (ball.getX() + brick.getWidth()/2 < brick.getX()){
+//            directionX = -1;
+//        }
+//        //intersects from right
+//        else if (ball.getX() + brick.getWidth()/2 > brick.getX() + brick.getWidth()) {
+//            directionX = 1;
+//        }
+//        //intersects from top
+//        else if (ball.getY() + brick.getHeight()/2 < brick.getY()){
+//            // if ball hits left third
+//            if (ball.getX() + ball.getFitWidth()< brick.getX() + brick.getWidth() / 3){
+//                directionX = -1;
+//            }
+//            //if ball hits right third
+//            if(ball.getX() + ball.getFitWidth()>brick.getX() + 2* (brick.getWidth() / 3)){
+//                directionX = 1;
+//            }
+//            directionY = -1;
+//        }
+//        //intersects from the bottom
+//        else if (ball.getY() + brick.getHeight()/2 > brick.getY() + brick.getHeight()) {
+//            directionY = 1;
+//        }
+//    }
+    private void bounceBallBricks(ImageView ball, Rectangle brick){
         if (ball.getX() + BOUNCER_SIZE/2 < brick.getX()){
             directionX = -1;
         }
@@ -230,8 +239,8 @@ public class runClass {
         else if (ball.getY() + BOUNCER_SIZE/2 > brick.getY() + brick.getHeight()) {
             directionY = 1;
         }
-
     }
+
 
 
 }
