@@ -1,5 +1,6 @@
 package breakout;
 
+
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -23,19 +24,19 @@ import javafx.scene.text.*;
 public class runClass {
     public static final String RESOURCE_PATH = "/";
     public static final String BOUNCER_IMAGE = RESOURCE_PATH + "img.png";
-    public static final int BOUNCER_SIZE = 40;
+    public static final int BOUNCER_SIZE = 20;
     public static int BOUNCER_SPEED = 50;
     public static int BOUNCER_CONSTANT_X = 5;
     public static int BOUNCER_CONSTANT_Y = 7;
     public static final Paint MOVER_COLOR = Color.CORNFLOWERBLUE;
-    public static int MOVER_SIZE = 50;
+    public static int MOVER_SIZE = 20;
     public static final int MOVER_SPEED = 8;
     public static final Paint GROWER_COLOR = Color.DARKRED;
     public static final double GROWER_RATE = 1.1;
-    public static int GROWER_SIZE = 50;
+    public static int GROWER_SIZE = 30;
     public static final Paint HIGHLIGHT = Color.OLIVEDRAB;
     public static final Paint PADDLE_COLOR = Color.SEAGREEN;
-    public static final int PADDLE_LENGTH = 140;
+    public static final int PADDLE_LENGTH = 80;
     public static final int PADDLE_WIDTH = (int) ( PADDLE_LENGTH / 10);
     public static final int PADDLE_SPEED = 20;
     private ImageView myBouncer;
@@ -65,6 +66,7 @@ public class runClass {
         myBouncer.setX(Main.SIZE / 2.0 - myBouncer.getBoundsInLocal().getWidth() / 2);
         myBouncer.setY(Main.SIZE / 2.0 - myBouncer.getBoundsInLocal().getHeight() / 2);
         // make some shapes and set their properties
+
         myMover = new Rectangle(n1x, n1y, MOVER_SIZE, MOVER_SIZE);
         myMover.setFill(MOVER_COLOR);
         myGrower = new Rectangle(n2x, n2y, GROWER_SIZE, GROWER_SIZE);
@@ -128,7 +130,7 @@ public class runClass {
 //            myGrower.setScaleX(1);
 //            myGrower.setScaleY(1);
             // ADD IMPLEMENTATION FOR HOW THE BALL REFLECTS DEPENDING ON WHERE IT HITS THE PADDLE
-            bounceBallBrick(myBouncer, myPaddle);
+            bounceBallPaddle2(myBouncer, myPaddle);
         }
     }
 
@@ -206,13 +208,30 @@ public class runClass {
                 directionX = 1;
             }
             directionY = -1;
-
         }
         //intersects from the bottom
         else if (ball.getY() + brick.getHeight()/2 > brick.getY() + brick.getHeight()) {
             directionY = 1;
         }
+    }
+    private void bounceBallPaddle2(ImageView ball, Rectangle brick){
+        if (ball.getX() + BOUNCER_SIZE/2 < brick.getX()){
+            directionX = -1;
+        }
+        //intersects from right
+        else if (ball.getX() + BOUNCER_SIZE/2 > brick.getX() + brick.getWidth()) {
+            directionX = 1;
+        }
+        //intersects from top
+        else if (ball.getY() + BOUNCER_SIZE/2 < brick.getY()){
+            directionY = -1;
+        }
+        //intersects from the bottom
+        else if (ball.getY() + BOUNCER_SIZE/2 > brick.getY() + brick.getHeight()) {
+            directionY = 1;
+        }
 
     }
+
 
 }
