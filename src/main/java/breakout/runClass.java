@@ -10,12 +10,10 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
-
+import javafx.scene.text.Text;
+import javafx.scene.text.Font;
 import java.util.Random;
-
-
-// Obtain a number between [0 - 49].
-
+import javafx.scene.text.*;
 /**
  * The class that setups the breakout window
  *
@@ -37,7 +35,8 @@ public class runClass {
     public static int GROWER_SIZE = 50;
     public static final Paint HIGHLIGHT = Color.OLIVEDRAB;
     public static final Paint PADDLE_COLOR = Color.SEAGREEN;
-    public static final int PADDLE_SIZE = 70;
+    public static final int PADDLE_LENGTH = 140;
+    public static final int PADDLE_WIDTH = (int) ( PADDLE_LENGTH / 10);
     public static final int PADDLE_SPEED = 20;
     private ImageView myBouncer;
     //private MainScreen screen1;
@@ -46,6 +45,8 @@ public class runClass {
     private Rectangle myPaddle;
     private int directionX;
     private int directionY;
+    private int score;
+    public static Text text2;
 
 
     public Scene setupGame(int width, int height, Paint background) {
@@ -69,14 +70,25 @@ public class runClass {
         myGrower = new Rectangle(n2x, n2y, GROWER_SIZE, GROWER_SIZE);
         myGrower.setFill(GROWER_COLOR);
         // ADDING PADDLE
-        myPaddle = new Rectangle(width / 2.0 - PADDLE_SIZE / 2.0, height - 50, PADDLE_SIZE, PADDLE_SIZE / 5.0);
+        myPaddle = new Rectangle(width / 2.0 - PADDLE_LENGTH / 2.0, height - 50, PADDLE_LENGTH, PADDLE_WIDTH);
         myPaddle.setFill(PADDLE_COLOR);
+        //ADDING SCORE
+        Text text1 = new Text(10, 20, "SCORE:");
+        text1.setFill(Color.DARKRED);
+        text1.setFont(new Font(20));
+        text2 = new Text(100, 20, String.valueOf(score));
+        text2.setFill(Color.DARKRED);
+        text2.setFont(new Font(20));
+        //text.setText("The quick brown fox jumps over the lazy dog");
+
 
         // order added to the group is the order in which they are drawn
         root.getChildren().add(myBouncer);
         root.getChildren().add(myMover);
         root.getChildren().add(myGrower);
         root.getChildren().add(myPaddle);
+        root.getChildren().add(text1);
+        root.getChildren().add(text2);
 
         // create a place to see the shapes
         Scene scene = new Scene(root, width, height, background);
@@ -92,7 +104,7 @@ public class runClass {
         myBouncer.setX(myBouncer.getX() + BOUNCER_SPEED * elapsedTime * directionX * BOUNCER_CONSTANT_X);
         myBouncer.setY(myBouncer.getY() + BOUNCER_SPEED * elapsedTime * directionY * BOUNCER_CONSTANT_Y);
 
-       
+
         if (myBouncer.getX() <= 0 || myBouncer.getX() >= Main.SIZE - myBouncer.getFitWidth()) {
             directionX = -1 * directionX;
         }
@@ -102,78 +114,39 @@ public class runClass {
 
         // check for collisions
         if (isIntersecting(myBouncer, myMover)) {
-            if (myBouncer.getX() + BOUNCER_SIZE/2 < myMover.getX()){
-                directionX = -1;
-            }
-//intersects from right
-            else if (myBouncer.getX() + BOUNCER_SIZE/2 > myMover.getX() + MOVER_SIZE) {
-                directionX = 1;
-            }
-//intersects from top
-            else if (myBouncer.getY() + BOUNCER_SIZE/2 < myMover.getY()){
-                directionY = -1;
-            }
-//intersects from the bottom
-            else if (myBouncer.getY() + BOUNCER_SIZE/2 > myMover.getY() + MOVER_SIZE) {
-                directionY = 1;
-            }
-
+            bounceBallBrick(myBouncer, myMover);
+            Score.updateScore(text2, 50);
         }
-//
-
         if (isIntersecting(myBouncer, myGrower)) {
 //            myGrower.setScaleX(1);
 //            myGrower.setScaleY(1);
-            if (myBouncer.getX() + BOUNCER_SIZE/2 < myGrower.getX()){
-                directionX = -1;
-            }
-//intersects from right
-            else if (myBouncer.getX() + BOUNCER_SIZE/2 > myGrower.getX() + GROWER_SIZE) {
-                directionX = 1;
-            }
-//intersects from top
-            else if (myBouncer.getY() + BOUNCER_SIZE/2 < myGrower.getY()){
-                directionY = -1;
-            }
-//intersects from the bottom
-            else if (myBouncer.getY() + BOUNCER_SIZE/2 > myGrower.getY() + GROWER_SIZE) {
-                directionY = 1;
-            }
+            bounceBallBrick(myBouncer, myGrower);
+            Score.updateScore(text2, 100);
         }
 
         if (isIntersecting(myBouncer, myPaddle)) {
 //            myGrower.setScaleX(1);
 //            myGrower.setScaleY(1);
             // ADD IMPLEMENTATION FOR HOW THE BALL REFLECTS DEPENDING ON WHERE IT HITS THE PADDLE
-            directionY = -1 * directionY;
+            bounceBallBrick(myBouncer, myPaddle);
         }
-
-
     }
 
     // What to do each time a key is pressed
     private void handleKeyInput(KeyCode code) {
-        // NOTE new Java syntax that some prefer (but watch out for the many special cases!)
-        //   https://blog.jetbrains.com/idea/2019/02/java-12-and-intellij-idea/
-        switch (code) {
-            case RIGHT -> myPaddle.setX(myPaddle.getX() + PADDLE_SPEED);
-            case LEFT -> myPaddle.setX(myPaddle.getX() - PADDLE_SPEED);
-            case UP -> myPaddle.setY(myPaddle.getY() - PADDLE_SPEED);
-            case DOWN -> myPaddle.setY(myPaddle.getY() + PADDLE_SPEED);
+
+        if (code == KeyCode.RIGHT && (myPaddle.getX() + PADDLE_LENGTH< Main.SIZE)) {
+            myPaddle.setX(myPaddle.getX() + PADDLE_SPEED);
         }
-        // TYPICAL way to do it, definitely more readable for longer actions
-//        if (code == KeyCode.RIGHT) {
-//            myMover.setX(myMover.getX() + MOVER_SPEED);
-//        }
-//        else if (code == KeyCode.LEFT) {
-//            myMover.setX(myMover.getX() - MOVER_SPEED);
-//        }
-//        else if (code == KeyCode.UP) {
-//            myMover.setY(myMover.getY() - MOVER_SPEED);
-//        }
-//        else if (code == KeyCode.DOWN) {
-//            myMover.setY(myMover.getY() + MOVER_SPEED);
-//        }
+        else if (code == KeyCode.LEFT &&(myPaddle.getX()> 0)) {
+            myPaddle.setX(myPaddle.getX() - PADDLE_SPEED);
+        }
+        else if (code == KeyCode.UP &&(myPaddle.getY()>(4*Main.SIZE) /5)) {
+            myPaddle.setY(myPaddle.getY() - PADDLE_SPEED);
+        }
+        else if (code == KeyCode.DOWN && ((myPaddle.getY() + PADDLE_WIDTH)< Main.SIZE)) {
+            myPaddle.setY(myPaddle.getY() + PADDLE_SPEED);
+        }
     }
 
     // What to do each time a key is pressed
@@ -193,6 +166,53 @@ public class runClass {
 //                                       a.getY() + a.getFitHeight() / 2,
 //                                       a.getFitWidth() / 2 - BOUNCER_SIZE / 20);
 //        return ! Shape.intersect(bouncerBounds, b).getBoundsInLocal().isEmpty();
+    }
+    private void bounceBallBrick(ImageView ball, Rectangle brick){
+        //intersects from left
+        if (ball.getX() + brick.getWidth()/2 < brick.getX()){
+            directionX = -1;
+        }
+        //intersects from right
+        else if (ball.getX() + brick.getWidth()/2 > brick.getX() + brick.getWidth()) {
+            directionX = 1;
+        }
+        //intersects from top
+        else if (ball.getY() + brick.getHeight()/2 < brick.getY()){
+            directionY = -1;
+        }
+        //intersects from the bottom
+        else if (ball.getY() + brick.getHeight()/2 > brick.getY() + brick.getHeight()) {
+            directionY = 1;
+        }
+
+    }
+    private void bounceBallPaddle(ImageView ball, Rectangle brick){
+        //intersects from left
+        if (ball.getX() + brick.getWidth()/2 < brick.getX()){
+            directionX = -1;
+        }
+        //intersects from right
+        else if (ball.getX() + brick.getWidth()/2 > brick.getX() + brick.getWidth()) {
+            directionX = 1;
+        }
+        //intersects from top
+        else if (ball.getY() + brick.getHeight()/2 < brick.getY()){
+            // if ball hits left third
+            if (ball.getX() + ball.getFitWidth()< brick.getX() + brick.getWidth() / 3){
+                directionX = -1;
+            }
+            //if ball hits right third
+            if(ball.getX() + ball.getFitWidth()>brick.getX() + 2* (brick.getWidth() / 3)){
+                directionX = 1;
+            }
+            directionY = -1;
+
+        }
+        //intersects from the bottom
+        else if (ball.getY() + brick.getHeight()/2 > brick.getY() + brick.getHeight()) {
+            directionY = 1;
+        }
+
     }
 
 }
