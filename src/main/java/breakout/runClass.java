@@ -13,6 +13,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 import javafx.scene.text.Font;
+
+import java.util.ArrayList;
 import java.util.Random;
 import javafx.scene.text.*;
 /**
@@ -20,7 +22,7 @@ import javafx.scene.text.*;
  *
  * @author Haris Adnan
  */
-
+// in isIntersecting funtion, put in a check for what type of block it is
 public class runClass {
     public static final String RESOURCE_PATH = "/";
     public static final String BOUNCER_IMAGE = RESOURCE_PATH + "img.png";
@@ -40,7 +42,7 @@ public class runClass {
     public static final int PADDLE_SPEED = 20;
     private ImageView myBouncer;
     //private MainScreen screen1;
-    private Rectangle block50;
+    //private Rectangle block50;
     private Rectangle block100;
     private Rectangle myPaddle;
     private int directionX;
@@ -49,13 +51,14 @@ public class runClass {
     public static Text scorenumber;
     public static Text livesremaining;
     private int lives;
-
+    private Group root = new Group();
+    private ArrayList<Rectangle> bricks = new ArrayList<>();
 
 
     public Scene setupGame(int width, int height, Paint background) {
         directionX = 1;
         directionY = 1;
-        Group root = new Group();
+        //Group root = new Group();
         Image image = new Image(getClass().getResourceAsStream(BOUNCER_IMAGE));
         myBouncer = new ImageView(image);
         myBouncer.setFitWidth(BOUNCER_SIZE);
@@ -69,8 +72,8 @@ public class runClass {
         myBouncer.setY(Main.SIZE / 2.0 - myBouncer.getBoundsInLocal().getHeight() / 2);
         // make some shapes and set their properties
 
-        block50 = new Rectangle(n1x, n1y, BLOCK50_SIZE, BLOCK50_SIZE);
-        block50.setFill(BLOCK50_COLOR);
+        //block50 = new Rectangle(n1x, n1y, BLOCK50_SIZE, BLOCK50_SIZE);
+        //block50.setFill(BLOCK50_COLOR);
         block100 = new Rectangle(n2x, n2y, BLOCK100_SIZE, BLOCK100_SIZE);
         block100.setFill(BLOCK100_COLOR);
         // ADDING PADDLE
@@ -95,14 +98,13 @@ public class runClass {
 
         // order added to the group is the order in which they are drawn
         root.getChildren().add(myBouncer);
-        root.getChildren().add(block50);
-        root.getChildren().add(block100);
+        //root.getChildren().add(block100);
         root.getChildren().add(myPaddle);
         root.getChildren().add(scorestring);
         root.getChildren().add(scorenumber);
         root.getChildren().add(livestring);
         root.getChildren().add(livesremaining);
-
+        createBlock50();
         // create a place to see the shapes
         Scene scene = new Scene(root, width, height, background);
         // respond to input
@@ -117,6 +119,10 @@ public class runClass {
         myBouncer.setX(myBouncer.getX() + BOUNCER_SPEED * elapsedTime * directionX * BOUNCER_CONSTANT_X);
         myBouncer.setY(myBouncer.getY() + BOUNCER_SPEED * elapsedTime * directionY * BOUNCER_CONSTANT_Y);
 
+        if(!bricks.isEmpty()){
+            bricks.removeIf(brick -> handleblock50collision(brick));
+        }
+
 
         if (myBouncer.getX() <= 0 || myBouncer.getX() >= Main.SIZE - myBouncer.getFitWidth()) {
             directionX = -1 * directionX;
@@ -129,10 +135,8 @@ public class runClass {
         }
 
         // check for collisions
-        if (isIntersecting(myBouncer, block50)) {
-            bounceBallBricks(myBouncer, block50);
-            Score.updateScore(scorenumber, 50);
-        }
+
+
         if (isIntersecting(myBouncer, block100)) {
 //            myGrower.setScaleX(1);
 //            myGrower.setScaleY(1);
@@ -146,6 +150,16 @@ public class runClass {
             // ADD IMPLEMENTATION FOR HOW THE BALL REFLECTS DEPENDING ON WHERE IT HITS THE PADDLE
             bounceBallBricks(myBouncer, myPaddle);
         }
+    }
+
+    public boolean handleblock50collision(Rectangle block50){
+        if (isIntersecting(myBouncer, block50)) {
+            bounceBallBricks(myBouncer, block50);
+            Score.updateScore(scorenumber, 50);
+            removeBrick(block50);
+            return true;
+        }
+        return false;
     }
 
     // What to do each time a key is pressed
@@ -164,6 +178,31 @@ public class runClass {
             myPaddle.setY(myPaddle.getY() + PADDLE_SPEED);
         }
     }
+    public void createBlock50(){
+        double width = Main.SIZE;
+        double height = Main.SIZE;
+        int spaceCheck = 1;
+
+        for (double i = 0; i < height- (4 * height)/5 ; i = i + 50){
+            for (double j = width; j > 0; j = j-25){
+                if(spaceCheck %2 == 0){
+                    Rectangle brick = new Rectangle(j, i, BLOCK50_SIZE,BLOCK50_SIZE);
+                    brick.setFill(BLOCK50_COLOR);
+                    root.getChildren().add(brick);
+                    bricks.add(brick);
+
+                }
+                spaceCheck++;
+            }
+        }
+    }
+    public void removeBrick(Rectangle brick){
+        root.getChildren().remove(brick);
+    }
+    //Gets the specific rectangle
+//    public Rectangle getRect(){
+//
+//    }
 
     // What to do each time a key is pressed
     private void handleMouseInput(double x, double y) {
@@ -183,51 +222,6 @@ public class runClass {
 //                                       a.getFitWidth() / 2 - BOUNCER_SIZE / 20);
 //        return ! Shape.intersect(bouncerBounds, b).getBoundsInLocal().isEmpty();
     }
-//    private void bounceBallBrick(ImageView ball, Rectangle brick){
-//        //intersects from left
-//        if (ball.getX() + brick.getWidth()/2 < brick.getX()){
-//            directionX = -1;
-//        }
-//        //intersects from right
-//        else if (ball.getX() + brick.getWidth()/2 > brick.getX() + brick.getWidth()) {
-//            directionX = 1;
-//        }
-//        //intersects from top
-//        else if (ball.getY() + brick.getHeight()/2 < brick.getY()){
-//            directionY = -1;
-//        }
-//        //intersects from the bottom
-//        else if (ball.getY() + brick.getHeight()/2 > brick.getY() + brick.getHeight()) {
-//            directionY = 1;
-//        }
-
-   // }
-//    private void bounceBallPaddle(ImageView ball, Rectangle brick){
-//        //intersects from left
-//        if (ball.getX() + brick.getWidth()/2 < brick.getX()){
-//            directionX = -1;
-//        }
-//        //intersects from right
-//        else if (ball.getX() + brick.getWidth()/2 > brick.getX() + brick.getWidth()) {
-//            directionX = 1;
-//        }
-//        //intersects from top
-//        else if (ball.getY() + brick.getHeight()/2 < brick.getY()){
-//            // if ball hits left third
-//            if (ball.getX() + ball.getFitWidth()< brick.getX() + brick.getWidth() / 3){
-//                directionX = -1;
-//            }
-//            //if ball hits right third
-//            if(ball.getX() + ball.getFitWidth()>brick.getX() + 2* (brick.getWidth() / 3)){
-//                directionX = 1;
-//            }
-//            directionY = -1;
-//        }
-//        //intersects from the bottom
-//        else if (ball.getY() + brick.getHeight()/2 > brick.getY() + brick.getHeight()) {
-//            directionY = 1;
-//        }
-//    }
     private void bounceBallBricks(ImageView ball, Rectangle brick){
         if (ball.getX() + BOUNCER_SIZE/2 < brick.getX()){
             directionX = -1;
@@ -245,7 +239,5 @@ public class runClass {
             directionY = 1;
         }
     }
-
-
 
 }
