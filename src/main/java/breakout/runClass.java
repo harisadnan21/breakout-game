@@ -57,6 +57,13 @@ public class runClass {
     private ArrayList<Rectangle> blocks50 = new ArrayList<>();
     private ArrayList<Rectangle> blocks100 = new ArrayList<>();
     private Scene scene;
+    private Main main;
+
+    public runClass(Main main){
+        this.main = main;
+
+    }
+
 
     public Scene setupGame(int width, int height, Paint background) {
 
@@ -150,10 +157,14 @@ public class runClass {
             bounceBallBricks(myBouncer, myPaddle);
         }
         if (Integer.parseInt(livesremaining.getText()) == 0){
-
-
+            main.stopanimation();
+            //animation.stop();
+            //scene = myGame.anotherfunction();
+            //stage.setScene()
         }
     }
+
+
 
     public boolean handleblock50collision(Rectangle block50){
         if (isIntersecting(myBouncer, block50)) {
@@ -301,5 +312,6 @@ public class runClass {
             directionY = 1;
         }
     }
+
 
 }

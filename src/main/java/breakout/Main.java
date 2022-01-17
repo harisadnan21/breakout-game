@@ -30,7 +30,7 @@ public class Main extends Application {
 
     // instance variables
     private runClass myGame;
-
+    private Timeline animation;
 
 
     /**
@@ -38,7 +38,7 @@ public class Main extends Application {
      */
     @Override
     public void start (Stage stage) {
-        myGame = new runClass();
+        myGame = new runClass(this);
 
         // attach scene to the stage and display it
         Scene scene = myGame.setupGame(SIZE, SIZE, BACKGROUND);
@@ -46,10 +46,19 @@ public class Main extends Application {
         stage.setTitle(TITLE);
         stage.show();
         // attach "game loop" to timeline to play it (basically just calling step() method repeatedly forever)
-        Timeline animation = new Timeline();
+        animation = new Timeline();
         animation.setCycleCount(Timeline.INDEFINITE);
         animation.getKeyFrames().add(new KeyFrame(Duration.seconds(SECOND_DELAY), e -> myGame.step(SECOND_DELAY)));
         animation.play();
 
+
+
+    }
+    public void stopanimation(){
+        if (Integer.parseInt(livesremaining.getText()) == 0){
+            animation.stop();
+            //scene = myGame.anotherfunction();
+            //stage.setScene()
+        }
     }
 }
