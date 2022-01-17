@@ -135,6 +135,7 @@ Smaller size of paddle, and the speed of the ball is faster. The bigger blocks a
 
 
  * Idea #3
+
 5 0 0 0 0 5
 
 1 1 3 3 1 1

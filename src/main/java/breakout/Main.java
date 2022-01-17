@@ -12,6 +12,8 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.scene.shape.Circle;
 
+import static breakout.runClass.livesremaining;
+
 
 /**
  * Feel free to completely change this code or delete it entirely.
@@ -48,5 +50,6 @@ public class Main extends Application {
         animation.setCycleCount(Timeline.INDEFINITE);
         animation.getKeyFrames().add(new KeyFrame(Duration.seconds(SECOND_DELAY), e -> myGame.step(SECOND_DELAY)));
         animation.play();
+
     }
 }

@@ -1,6 +1,8 @@
 package breakout;
 
-
+import javafx.scene.control.Button;
+import javafx.scene.robot.Robot;
+import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -43,7 +45,7 @@ public class runClass {
     private ImageView myBouncer;
     //private MainScreen screen1;
     //private Rectangle block50;
-    private Rectangle block100;
+
     private Rectangle myPaddle;
     private int directionX;
     private int directionY;
@@ -51,31 +53,32 @@ public class runClass {
     public static Text scorenumber;
     public static Text livesremaining;
     private int lives;
-    private Group root = new Group();
-    private ArrayList<Rectangle> bricks = new ArrayList<>();
-
+    private Group root;
+    private ArrayList<Rectangle> blocks50 = new ArrayList<>();
+    private ArrayList<Rectangle> blocks100 = new ArrayList<>();
+    private Scene scene;
 
     public Scene setupGame(int width, int height, Paint background) {
+
+        root = new Group();
         directionX = 1;
         directionY = 1;
+
         //Group root = new Group();
         Image image = new Image(getClass().getResourceAsStream(BOUNCER_IMAGE));
         myBouncer = new ImageView(image);
         myBouncer.setFitWidth(BOUNCER_SIZE);
         myBouncer.setFitHeight(BOUNCER_SIZE);
         Random rand = new Random();
-        int n1x = rand.nextInt(Main.SIZE);
-        int n1y = rand.nextInt(Main.SIZE);
+
         int n2x = rand.nextInt(Main.SIZE);
         int n2y = rand.nextInt(Main.SIZE);
         myBouncer.setX(Main.SIZE / 2.0 - myBouncer.getBoundsInLocal().getWidth() / 2);
         myBouncer.setY(Main.SIZE / 2.0 - myBouncer.getBoundsInLocal().getHeight() / 2);
         // make some shapes and set their properties
 
-        //block50 = new Rectangle(n1x, n1y, BLOCK50_SIZE, BLOCK50_SIZE);
-        //block50.setFill(BLOCK50_COLOR);
-        block100 = new Rectangle(n2x, n2y, BLOCK100_SIZE, BLOCK100_SIZE);
-        block100.setFill(BLOCK100_COLOR);
+        //block100 = new Rectangle(n2x, n2y, BLOCK100_SIZE, BLOCK100_SIZE);
+        //block100.setFill(BLOCK100_COLOR);
         // ADDING PADDLE
         myPaddle = new Rectangle(width / 2.0 - PADDLE_LENGTH / 2.0, height - 50, PADDLE_LENGTH, PADDLE_WIDTH);
         myPaddle.setFill(PADDLE_COLOR);
@@ -94,33 +97,37 @@ public class runClass {
         livesremaining = new Text(100 , 50 , String.valueOf(lives));
         livesremaining.setFill(Color.DARKRED);
         livesremaining.setFont(new Font(20));
-        //text.setText("The quick brown fox jumps over the lazy dog");
-
-        // order added to the group is the order in which they are drawn
+        //Button okButton = new Button("Start");
+        //root.getChildren().add(okButton);
         root.getChildren().add(myBouncer);
-        //root.getChildren().add(block100);
         root.getChildren().add(myPaddle);
         root.getChildren().add(scorestring);
         root.getChildren().add(scorenumber);
         root.getChildren().add(livestring);
         root.getChildren().add(livesremaining);
         createBlock50();
+        createBlock100();
+
         // create a place to see the shapes
-        Scene scene = new Scene(root, width, height, background);
+        scene = new Scene(root, width, height, background);
         // respond to input
+        //handlePaddlePosition();
         scene.setOnKeyPressed(e -> handleKeyInput(e.getCode()));
-        scene.setOnMouseClicked(e -> handleMouseInput(e.getX(), e.getY()));
+        //scene.setOnMouseClicked(e -> handleMouseInput(e.getX(), e.getY()));
         return scene;
     }
 
     public void step(double elapsedTime) {
-
+        System.out.println(blocks100);
 
         myBouncer.setX(myBouncer.getX() + BOUNCER_SPEED * elapsedTime * directionX * BOUNCER_CONSTANT_X);
         myBouncer.setY(myBouncer.getY() + BOUNCER_SPEED * elapsedTime * directionY * BOUNCER_CONSTANT_Y);
 
-        if(!bricks.isEmpty()){
-            bricks.removeIf(brick -> handleblock50collision(brick));
+        if(!blocks50.isEmpty()){
+            blocks50.removeIf(brick -> handleblock50collision(brick));
+        }
+        if(!blocks100.isEmpty()){
+            blocks100.removeIf(brick -> handleblock100collision(brick));
         }
 
 
@@ -136,19 +143,15 @@ public class runClass {
 
         // check for collisions
 
-
-        if (isIntersecting(myBouncer, block100)) {
-//            myGrower.setScaleX(1);
-//            myGrower.setScaleY(1);
-            bounceBallBricks(myBouncer, block100);
-            Score.updateScore(scorenumber, 100);
-        }
-
         if (isIntersecting(myBouncer, myPaddle)) {
 //            myGrower.setScaleX(1);
 //            myGrower.setScaleY(1);
             // ADD IMPLEMENTATION FOR HOW THE BALL REFLECTS DEPENDING ON WHERE IT HITS THE PADDLE
             bounceBallBricks(myBouncer, myPaddle);
+        }
+        if (Integer.parseInt(livesremaining.getText()) == 0){
+
+
         }
     }
 
@@ -161,6 +164,21 @@ public class runClass {
         }
         return false;
     }
+    public boolean handleblock100collision(Rectangle block100){
+        if (isIntersecting(myBouncer, block100)) {
+            bounceBallBricks(myBouncer, block100);
+            Score.updateScore(scorenumber, 100);
+            int numberofhits = Integer.parseInt(block100.getId());
+            numberofhits++;
+            block100.setId(String.valueOf(numberofhits));
+            if(numberofhits == 2){
+                removeBrick(block100);
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     // What to do each time a key is pressed
     private void handleKeyInput(KeyCode code) {
@@ -177,7 +195,30 @@ public class runClass {
         else if (code == KeyCode.DOWN && ((myPaddle.getY() + PADDLE_WIDTH)< Main.SIZE)) {
             myPaddle.setY(myPaddle.getY() + PADDLE_SPEED);
         }
+        else if (code == KeyCode.E){
+            Cheats.cheatlives(livesremaining);
+        }
+        else if (code == KeyCode.S){
+            Cheats.addpoints(scorenumber);
+        }
     }
+
+//    public void handlePaddlePosition(){
+//        Bounds bounds = root.localToScreen(root.getBoundsInLocal());
+//        double sceneXPos = 0;
+//
+//        double xPos = robot.getMouseX();
+//
+//
+//        if(xPos >= sceneXPos + (PADDLE_LENGTH/2) && xPos <= (sceneXPos +Main.SIZE) - (PADDLE_LENGTH/2)){
+//            myPaddle.setLayoutX(xPos - sceneXPos - (PADDLE_LENGTH/2));
+//        } else if (xPos < sceneXPos + (PADDLE_LENGTH/2)){
+//            myPaddle.setLayoutX(0);
+//        } else if (xPos > (sceneXPos + Main.SIZE) - (PADDLE_LENGTH/2)){
+//
+//            myPaddle.setLayoutX(Main.SIZE - PADDLE_LENGTH);
+//        }
+//    }
     public void createBlock50(){
         double width = Main.SIZE;
         double height = Main.SIZE;
@@ -189,13 +230,34 @@ public class runClass {
                     Rectangle brick = new Rectangle(j, i, BLOCK50_SIZE,BLOCK50_SIZE);
                     brick.setFill(BLOCK50_COLOR);
                     root.getChildren().add(brick);
-                    bricks.add(brick);
+                    blocks50.add(brick);
 
                 }
                 spaceCheck++;
             }
         }
     }
+
+    public void createBlock100(){
+        double width = Main.SIZE;
+        double height = Main.SIZE;
+        int spaceCheck = 1;
+
+        for (double i = height- (4 * height)/5; i < height- (3 * height)/5 ; i = i + 50){
+            for (double j = width; j > 0; j = j-25){
+                if(spaceCheck %2 == 0){
+                    Rectangle brick = new Rectangle(j, i, BLOCK100_SIZE,BLOCK100_SIZE);
+                    brick.setId("0");
+                    brick.setFill(BLOCK100_COLOR);
+                    root.getChildren().add(brick);
+                    blocks100.add(brick);
+
+                }
+                spaceCheck++;
+            }
+        }
+    }
+
     public void removeBrick(Rectangle brick){
         root.getChildren().remove(brick);
     }
@@ -205,12 +267,12 @@ public class runClass {
 //    }
 
     // What to do each time a key is pressed
-    private void handleMouseInput(double x, double y) {
-        if (block100.contains(x, y)) {
-            block100.setScaleX(block100.getScaleX() * BLOCK100_RATE);
-            block100.setScaleY(block100.getScaleY() * BLOCK100_RATE);
-        }
-    }
+//    private void handleMouseInput(double x, double y) {
+//        if (block100.contains(x, y)) {
+//            block100.setScaleX(block100.getScaleX() * BLOCK100_RATE);
+//            block100.setScaleY(block100.getScaleY() * BLOCK100_RATE);
+//        }
+//    }
 
     // Name for a potentially complex comparison to make code more readable
     private boolean isIntersecting(ImageView a, Rectangle b) {
