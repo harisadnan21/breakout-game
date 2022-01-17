@@ -26,14 +26,13 @@ public class runClass {
     public static final String BOUNCER_IMAGE = RESOURCE_PATH + "img.png";
     public static final int BOUNCER_SIZE = 20;
     public static int BOUNCER_SPEED = 50;
-    public static int BOUNCER_CONSTANT_X = 5;
-    public static int BOUNCER_CONSTANT_Y = 7;
-    public static final Paint MOVER_COLOR = Color.CORNFLOWERBLUE;
-    public static int MOVER_SIZE = 20;
-    public static final int MOVER_SPEED = 8;
-    public static final Paint GROWER_COLOR = Color.DARKRED;
-    public static final double GROWER_RATE = 1.1;
-    public static int GROWER_SIZE = 30;
+    public static int BOUNCER_CONSTANT_X = 3;
+    public static int BOUNCER_CONSTANT_Y = 5;
+    public static final Paint BLOCK50_COLOR = Color.CORNFLOWERBLUE;
+    public static int BLOCK50_SIZE = 20;
+    public static final Paint BLOCK100_COLOR = Color.DARKRED;
+    public static final double BLOCK100_RATE = 1.1;
+    public static int BLOCK100_SIZE = 30;
     public static final Paint HIGHLIGHT = Color.OLIVEDRAB;
     public static final Paint PADDLE_COLOR = Color.SEAGREEN;
     public static final int PADDLE_LENGTH = 80;
@@ -41,8 +40,8 @@ public class runClass {
     public static final int PADDLE_SPEED = 20;
     private ImageView myBouncer;
     //private MainScreen screen1;
-    private Rectangle myMover;
-    private Rectangle myGrower;
+    private Rectangle block50;
+    private Rectangle block100;
     private Rectangle myPaddle;
     private int directionX;
     private int directionY;
@@ -50,6 +49,7 @@ public class runClass {
     public static Text scorenumber;
     public static Text livesremaining;
     private int lives;
+
 
 
     public Scene setupGame(int width, int height, Paint background) {
@@ -69,10 +69,10 @@ public class runClass {
         myBouncer.setY(Main.SIZE / 2.0 - myBouncer.getBoundsInLocal().getHeight() / 2);
         // make some shapes and set their properties
 
-        myMover = new Rectangle(n1x, n1y, MOVER_SIZE, MOVER_SIZE);
-        myMover.setFill(MOVER_COLOR);
-        myGrower = new Rectangle(n2x, n2y, GROWER_SIZE, GROWER_SIZE);
-        myGrower.setFill(GROWER_COLOR);
+        block50 = new Rectangle(n1x, n1y, BLOCK50_SIZE, BLOCK50_SIZE);
+        block50.setFill(BLOCK50_COLOR);
+        block100 = new Rectangle(n2x, n2y, BLOCK100_SIZE, BLOCK100_SIZE);
+        block100.setFill(BLOCK100_COLOR);
         // ADDING PADDLE
         myPaddle = new Rectangle(width / 2.0 - PADDLE_LENGTH / 2.0, height - 50, PADDLE_LENGTH, PADDLE_WIDTH);
         myPaddle.setFill(PADDLE_COLOR);
@@ -84,18 +84,23 @@ public class runClass {
         scorenumber.setFill(Color.DARKRED);
         scorenumber.setFont(new Font(20));
         //ADDING LIVES
+        Text livestring =new Text( 10, 50, "LIVES:");
+        livestring.setFill(Color.DARKRED);
+        livestring.setFont(new Font(20));
         lives = 3;
-        livesremaining = new Text(10 , 50 , String.valueOf(lives));
+        livesremaining = new Text(100 , 50 , String.valueOf(lives));
+        livesremaining.setFill(Color.DARKRED);
+        livesremaining.setFont(new Font(20));
         //text.setText("The quick brown fox jumps over the lazy dog");
-
 
         // order added to the group is the order in which they are drawn
         root.getChildren().add(myBouncer);
-        root.getChildren().add(myMover);
-        root.getChildren().add(myGrower);
+        root.getChildren().add(block50);
+        root.getChildren().add(block100);
         root.getChildren().add(myPaddle);
         root.getChildren().add(scorestring);
         root.getChildren().add(scorenumber);
+        root.getChildren().add(livestring);
         root.getChildren().add(livesremaining);
 
         // create a place to see the shapes
@@ -124,14 +129,14 @@ public class runClass {
         }
 
         // check for collisions
-        if (isIntersecting(myBouncer, myMover)) {
-            bounceBallBricks(myBouncer, myMover);
+        if (isIntersecting(myBouncer, block50)) {
+            bounceBallBricks(myBouncer, block50);
             Score.updateScore(scorenumber, 50);
         }
-        if (isIntersecting(myBouncer, myGrower)) {
+        if (isIntersecting(myBouncer, block100)) {
 //            myGrower.setScaleX(1);
 //            myGrower.setScaleY(1);
-            bounceBallBricks(myBouncer, myGrower);
+            bounceBallBricks(myBouncer, block100);
             Score.updateScore(scorenumber, 100);
         }
 
@@ -162,9 +167,9 @@ public class runClass {
 
     // What to do each time a key is pressed
     private void handleMouseInput(double x, double y) {
-        if (myGrower.contains(x, y)) {
-            myGrower.setScaleX(myGrower.getScaleX() * GROWER_RATE);
-            myGrower.setScaleY(myGrower.getScaleY() * GROWER_RATE);
+        if (block100.contains(x, y)) {
+            block100.setScaleX(block100.getScaleX() * BLOCK100_RATE);
+            block100.setScaleY(block100.getScaleY() * BLOCK100_RATE);
         }
     }
 
