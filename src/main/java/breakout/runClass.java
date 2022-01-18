@@ -31,23 +31,19 @@ public class runClass {
   public static final String RESOURCE_PATH = "/";
   public static final String BOUNCER_IMAGE = RESOURCE_PATH + "img.png";
   public static final int BOUNCER_SIZE = 20;
+
   public static int BOUNCER_SPEED = 50;
   public static int BOUNCER_CONSTANT_X = 1;
   public static int BOUNCER_CONSTANT_Y = 4;
   public static final Paint BLOCK50_COLOR = Color.CORNFLOWERBLUE;
   public static int BLOCK50_SIZE = 20;
   public static final Paint BLOCK100_COLOR = Color.DARKRED;
-  public static final double BLOCK100_RATE = 1.1;
   public static int BLOCK100_SIZE = 30;
-  public static final Paint HIGHLIGHT = Color.OLIVEDRAB;
   public static final Paint PADDLE_COLOR = Color.SEAGREEN;
   public static final int PADDLE_LENGTH = 80;
   public static final int PADDLE_WIDTH = (int) (PADDLE_LENGTH / 10);
   public static final int PADDLE_SPEED = 20;
   private ImageView myBouncer;
-  //private MainScreen screen1;
-  //private Rectangle block50;
-
   private Rectangle myPaddle;
   private int directionX;
   private int directionY;
@@ -57,7 +53,7 @@ public class runClass {
   private int lives;
   private Group root;
   private ArrayList<Rectangle> blocks50 = new ArrayList<>();
-  private ArrayList<Rectangle> blocks100 = new ArrayList<>();
+  private ArrayList<Rectangleobj> blocks100 = new ArrayList<>();
   private Scene scene;
   private Main main;
 
@@ -78,10 +74,6 @@ public class runClass {
     myBouncer = new ImageView(image);
     myBouncer.setFitWidth(BOUNCER_SIZE);
     myBouncer.setFitHeight(BOUNCER_SIZE);
-    Random rand = new Random();
-
-    int n2x = rand.nextInt(Main.SIZE);
-    int n2y = rand.nextInt(Main.SIZE);
     myBouncer.setX(Main.SIZE / 2.0 - myBouncer.getBoundsInLocal().getWidth() / 2);
     myBouncer.setY(Main.SIZE / 2.0 - myBouncer.getBoundsInLocal().getHeight() / 2);
     // make some shapes and set their properties
@@ -189,15 +181,15 @@ public class runClass {
     return false;
   }
 
-  public boolean handleblock100collision(Rectangle block100) {
-    if (isIntersecting(myBouncer, block100)) {
-      bounceBallBricks(myBouncer, block100);
+  public boolean handleblock100collision(Rectangleobj block100) {
+    if (isIntersectingobj(myBouncer, block100)) {
+      bounceBallBricksobj(myBouncer, block100);
       Score.updateScore(scorenumber, 100);
-      int numberofhits = Integer.parseInt(block100.getId());
+      int numberofhits = block100.getHits();
       numberofhits++;
-      block100.setId(String.valueOf(numberofhits));
+      block100.setHits(numberofhits);
       if (numberofhits == 2) {
-        removeBrick(block100);
+        removeBrickobj(block100);
         return true;
       }
     }
@@ -266,10 +258,9 @@ public class runClass {
     for (double i = height - (4 * height) / 5; i < height - (3 * height) / 5; i = i + 50) {
       for (double j = width; j > 0; j = j - 25) {
         if (spaceCheck % 2 == 0) {
-          Rectangle brick = new Rectangle(j, i, BLOCK100_SIZE, BLOCK100_SIZE);
-          brick.setId("0");
+          Rectangleobj brick = new Rectangleobj(j, i, BLOCK100_SIZE, BLOCK100_SIZE, 0);
           brick.setFill(BLOCK100_COLOR);
-          root.getChildren().add(brick);
+          //root.getChildren().add(brick);
           blocks100.add(brick);
 
         }
@@ -279,6 +270,9 @@ public class runClass {
   }
 
   public void removeBrick(Rectangle brick) {
+    root.getChildren().remove(brick);
+  }
+  public void removeBrickobj(Rectangleobj brick) {
     root.getChildren().remove(brick);
   }
 
@@ -292,8 +286,29 @@ public class runClass {
 //                                       a.getFitWidth() / 2 - BOUNCER_SIZE / 20);
 //        return ! Shape.intersect(bouncerBounds, b).getBoundsInLocal().isEmpty();
   }
+  private boolean isIntersectingobj(ImageView a, Rectangleobj b){
+    return b.getBoundsInParent().intersects(a.getBoundsInParent());
+  }
 
   private void bounceBallBricks(ImageView ball, Rectangle brick) {
+    if (ball.getX() + BOUNCER_SIZE / 2 < brick.getX()) {
+      directionX = -1;
+    }
+    //intersects from right
+    else if (ball.getX() + BOUNCER_SIZE / 2 > brick.getX() + brick.getWidth()) {
+      directionX = 1;
+    }
+    //intersects from top
+    else if (ball.getY() + BOUNCER_SIZE / 2 < brick.getY()) {
+      directionY = -1;
+    }
+    //intersects from the bottom
+    else if (ball.getY() + BOUNCER_SIZE / 2 > brick.getY() + brick.getHeight()) {
+      directionY = 1;
+    }
+  }
+
+  private void bounceBallBricksobj(ImageView ball, Rectangleobj brick) {
     if (ball.getX() + BOUNCER_SIZE / 2 < brick.getX()) {
       directionX = -1;
     }
