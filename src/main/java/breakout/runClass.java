@@ -23,31 +23,37 @@ import java.lang.String;
 import java.io.File;  // Import the File class
 import java.io.FileNotFoundException;  // Import this class to handle errors
 import java.util.Scanner; // Import the Scanner class to read text files
+
 /**
  * The class that setups the breakout window
- *
+ * depends on Main
  * @author Haris Adnan
  */
 // in isIntersecting funtion, put in a check for what type of block it is
 public class runClass {
 
-  public static final String RESOURCE_PATH = "/Users/harisadnan/Desktop/Spring_2022/CS_308/breakout_ha109/src/main/java/breakout/";
+  // /Users/harisadnan/Desktop/Spring_2022/CS_308/breakout_ha109/src/main/java/breakout/
+  public static final String RESOURCE_PATH = "/";
   public static final String BOUNCER_IMAGE = RESOURCE_PATH + "img.png";
   public static final String LEVEL2 = RESOURCE_PATH + "level2.txt";
+  public static final String LEVEL1 = RESOURCE_PATH + "level1.txt";
+  public static final String LEVEL3 = RESOURCE_PATH + "level3.txt";
   public static final int BOUNCER_SIZE = 20;
 
   public static int BOUNCER_SPEED = 50;
-  public static int BOUNCER_CONSTANT_X = 1;
-  public static int BOUNCER_CONSTANT_Y = 4;
-  public static final Paint BLOCK50_COLOR = Color.CORNFLOWERBLUE;
-  public static int BLOCK50_SIZE = 30;
+  public static int BOUNCER_CONSTANT_X = 2;
+  public static int BOUNCER_CONSTANT_Y = 5;
+  public static final Paint BLOCK50_COLOR = Color.INDIGO;
+  public static int BLOCK50_SIZE = 40;
+  public static int BLOCKSOLID_SIZE = 22;
+  public static final Paint BLOCKSOLID_COLOR = Color.GRAY;
   public static final Paint BLOCK100_COLOR = Color.DARKRED;
   public static final Paint BLOCKBALLSLOW_COLOR = Color.DARKGREEN;
   public static final Paint BLOCKINCPADDLE_COLOR = Color.PURPLE;
-  public static int BLOCKSLOWPADDLE_SIZE = 13;
+  public static int BLOCKSLOWPADDLE_SIZE = 25;
   public static final Paint BLOCKSLOWPADDLE_COLOR = Color.DARKCYAN;
-  public static int BLOCK100_SIZE = 20;
-  public static int BLOCKINCPADDLE_SIZE = 15;
+  public static int BLOCK100_SIZE = 25;
+  public static int BLOCKINCPADDLE_SIZE = 25;
   public static final Paint PADDLE_COLOR = Color.SEAGREEN;
   public static int PADDLE_LENGTH = 80;
   public static int PADDLE_WIDTH = (int) (PADDLE_LENGTH / 10);
@@ -62,12 +68,13 @@ public class runClass {
   public static Text levelnumber;
   private int level;
   private int lives;
-  private Group root;
+  public static Group root;
   private ArrayList<Rectangle> blocks50 = new ArrayList<>();
   private ArrayList<Rectangle> blocks100 = new ArrayList<>();
   private ArrayList<Rectangle> blocksballslow = new ArrayList<>();
   private ArrayList<Rectangle> blocksincpaddle = new ArrayList<>();
   private ArrayList<Rectangle> blocksslowpaddle = new ArrayList<>();
+  private ArrayList<Rectangle> blockssolid = new ArrayList<>();
   private Scene scene;
   private Main main;
   private double changingballspeedconstant;
@@ -79,47 +86,20 @@ public class runClass {
 
   }
 
+  /**
+   * function that provides the intial setup for the game. Parameters define the size, color and level of game
+   */
 
-  public Scene setupGame(int width, int height, Paint background) {
-
+  public Scene setupGame(int width, int height, Paint background, int level) {
+    this.level = level;
     root = new Group();
     directionX = 1;
     directionY = -1;
-    try {
-      File myObj = new File(LEVEL2);
-      Scanner myReader = new Scanner(myObj);
-      int yval = 0;
-      while (myReader.hasNextLine()) {
-        String data = myReader.nextLine();
-        for(int i =0; i<data.length(); i++){
-          if(Character.getNumericValue(data.charAt(i)) == 0){
-            continue;
-          }
-          else if(Character.getNumericValue(data.charAt(i)) == 1){
-            createBlock50(i * 15, yval);
-          }
-          else if(Character.getNumericValue(data.charAt(i)) == 2){
-            createBlock100(i * 15, yval);
-          }
-          else if(Character.getNumericValue(data.charAt(i)) == 3){
-            createBlockBallSlow(i * 15, yval);
-          }
-          else if(Character.getNumericValue(data.charAt(i)) == 4){
-            createBlockIncPaddle(i * 15, yval);
-          }
-          else if(Character.getNumericValue(data.charAt(i)) == 5){
-            createBlockSlowPaddle(i * 15, yval);
-          }
-          yval = yval + 100;
-        }
-        System.out.println(data);
-      }
-      myReader.close();
-    } catch (FileNotFoundException e) {
-      System.out.println("An error occurred.");
-      e.printStackTrace();
+    //Smaller size of paddle, and the speed of the ball is faster.
+    if (level == 2) {
+      changingpaddlelengthconstant = 0.80;
+      changingballspeedconstant = 1.2;
     }
-
     //Group root = new Group();
     Image image = new Image(getClass().getResourceAsStream(BOUNCER_IMAGE));
     myBouncer = new ImageView(image);
@@ -134,34 +114,28 @@ public class runClass {
     myPaddle.setFill(PADDLE_COLOR);
     //ADDING SCORE
     Text scorestring = new Text(10, 20, "SCORE:");
-    scorestring.setFill(Color.DARKRED);
+    scorestring.setFill(Color.ANTIQUEWHITE);
     scorestring.setFont(new Font(20));
     scorenumber = new Text(100, 20, String.valueOf(score));
-    scorenumber.setFill(Color.DARKRED);
+    scorenumber.setFill(Color.ANTIQUEWHITE);
     scorenumber.setFont(new Font(20));
     //ADDING LIVES
     Text livestring = new Text(10, 50, "LIVES:");
-    livestring.setFill(Color.DARKRED);
+    livestring.setFill(Color.ANTIQUEWHITE);
     livestring.setFont(new Font(20));
     lives = 3;
     livesremaining = new Text(100, 50, String.valueOf(lives));
-    livesremaining.setFill(Color.DARKRED);
+    livesremaining.setFill(Color.ANTIQUEWHITE);
     livesremaining.setFont(new Font(20));
     //ADDING LEVEL NUMBER
-    level = 1;
     Text levelstring = new Text(10, 80, "LEVEL:");
-    levelstring.setFill(Color.DARKRED);
+    levelstring.setFill(Color.ANTIQUEWHITE);
     levelstring.setFont(new Font(20));
     levelnumber = new Text(100, 80, String.valueOf(level));
-    levelnumber.setFill(Color.DARKRED);
+    levelnumber.setFill(Color.ANTIQUEWHITE);
     levelnumber.setFont(new Font(20));
-    //Button okButton = new Button("Start");
-    //root.getChildren().add(okButton);
-//    createBlock50();
-//    createBlock100();
-//    createBlockBallSlow();
-//    createBlockIncPaddle();
-//    createBlockSlowPaddle();
+    createLevel("/level" + level + ".txt");
+
     root.getChildren().add(myBouncer);
     root.getChildren().add(myPaddle);
     root.getChildren().add(scorestring);
@@ -170,29 +144,39 @@ public class runClass {
     root.getChildren().add(livesremaining);
     root.getChildren().add(levelstring);
     root.getChildren().add(levelnumber);
-
     changingpaddlelengthconstant = 1;
     changingballspeedconstant = 1;
     changingpaddlespeedconstant = 1;
     // create a place to see the shapes
     scene = new Scene(root, width, height, background);
     // respond to input
-    //handlePaddlePosition();
     scene.setOnKeyPressed(e -> handleKeyInput(e.getCode()));
-    //scene.setOnMouseClicked(e -> handleMouseInput(e.getX(), e.getY()));
+
     return scene;
   }
 
+ /**
+ function that updates each frame of the animation.
+
+  */
   public void step(double elapsedTime) {
-
-
+    System.out.println(blocks50);
+    System.out.println(blocksballslow);
+    System.out.println(blocksincpaddle);
+    System.out.println(blocks100);
+    System.out.println(blocksslowpaddle);
     myBouncer.setX(
         myBouncer.getX() + BOUNCER_SPEED * elapsedTime * directionX * BOUNCER_CONSTANT_X
             * changingballspeedconstant);
     myBouncer.setY(
         myBouncer.getY() + BOUNCER_SPEED * elapsedTime * directionY * BOUNCER_CONSTANT_Y
             * changingballspeedconstant);
+    if (blocks50.isEmpty() && blocks100.isEmpty() && blocksballslow.isEmpty()
+        && blocksincpaddle.isEmpty() && blocksslowpaddle.isEmpty()) {
+      level += 1;
+      main.shiftLevel(level);
 
+    }
     if (!blocks50.isEmpty()) {
       blocks50.removeIf(brick -> handleblock50collision(brick));
     }
@@ -208,6 +192,9 @@ public class runClass {
     if (!blocksslowpaddle.isEmpty()) {
       blocksslowpaddle.removeIf(brick -> handleblockslowpaddlecollision(brick));
     }
+    if (!blocksslowpaddle.isEmpty()) {
+      blockssolid.removeIf(brick -> handleblockssolidcollision(brick));
+    }
 
     if (myBouncer.getX() <= 0 || myBouncer.getX() >= Main.SIZE - myBouncer.getFitWidth()) {
       directionX = -1 * directionX;
@@ -219,19 +206,12 @@ public class runClass {
       directionY = -1 * directionY;
     }
 
-    // check for collisions
-
     if (isIntersecting(myBouncer, myPaddle)) {
-//            myGrower.setScaleX(1);
-//            myGrower.setScaleY(1);
-      // ADD IMPLEMENTATION FOR HOW THE BALL REFLECTS DEPENDING ON WHERE IT HITS THE PADDLE
       bounceBallBricks(myBouncer, myPaddle);
     }
     if (Integer.parseInt(livesremaining.getText()) == 0) {
-      main.stopanimation();
-      //animation.stop();
-      //scene = myGame.anotherfunction();
-      //stage.setScene()
+      main.shiftLevel(level);
+
     }
     if (myBouncer.getY() >= Main.SIZE - myBouncer.getFitHeight()) {
       refreshBall();
@@ -239,14 +219,41 @@ public class runClass {
 
   }
 
-  public void refreshBall() {
+  private void refreshBall() {
     Score.updateLives(livesremaining);
     myBouncer.setX(Main.SIZE / 2);
     myBouncer.setY(Main.SIZE / 2);
     directionY = -1;
   }
 
-  public boolean handleblock50collision(Rectangle block50) {
+  private void createLevel(String file) {
+    Scanner input = new Scanner(getClass().getResourceAsStream(file));
+    int yval = 0;
+    int diff = (Main.SIZE - 50) / 5;
+    while (input.hasNextLine()) {
+      String data = input.nextLine();
+      for (int i = 0; i < data.length(); i++) {
+        if (Character.getNumericValue(data.charAt(i)) == 0 && file.equals("/level3.txt")) {
+          createBlockSolid(i * diff, yval);
+        } else if (Character.getNumericValue(data.charAt(i)) == 1) {
+          createBlock50(i * diff, yval);
+        } else if (Character.getNumericValue(data.charAt(i)) == 2) {
+          createBlock100(i * diff, yval);
+        } else if (Character.getNumericValue(data.charAt(i)) == 3) {
+          createBlockBallSlow(i * diff, yval);
+        } else if (Character.getNumericValue(data.charAt(i)) == 4) {
+          createBlockIncPaddle(i * diff, yval);
+        } else if (Character.getNumericValue(data.charAt(i)) == 5) {
+          createBlockSlowPaddle(i * diff, yval);
+        }
+
+      }
+      yval = yval + diff - 20;
+    }
+    input.close();
+  }
+
+  private boolean handleblock50collision(Rectangle block50) {
     if (isIntersecting(myBouncer, block50)) {
       bounceBallBricks(myBouncer, block50);
       Score.updateScore(scorenumber, 50);
@@ -256,20 +263,8 @@ public class runClass {
     return false;
   }
 
-  public boolean handleblock100collision(Rectangle block100) {
-//    if (isIntersectingobj(myBouncer, block100)) {
-//      bounceBallBricksobj(myBouncer, block100);
-//      Score.updateScore(scorenumber, 100);
-//      int numberofhits = block100.getHits();
-//      numberofhits++;
-//      block100.setHits(numberofhits);
-//      if (numberofhits == 2) {
-//        removeBrickobj(block100);
-//        return true;
-//      }
-//    }
-//    return false;
-//  }
+
+  private boolean handleblock100collision(Rectangle block100) {
     if (isIntersecting(myBouncer, block100)) {
       bounceBallBricks(myBouncer, block100);
       Score.updateScore(scorenumber, 100);
@@ -279,7 +274,7 @@ public class runClass {
     return false;
   }
 
-  public boolean handleblockballslowcollision(Rectangle blockballslow) {
+  private boolean handleblockballslowcollision(Rectangle blockballslow) {
     if (isIntersecting(myBouncer, blockballslow)) {
       bounceBallBricks(myBouncer, blockballslow);
       Score.updateScore(scorenumber, 100);
@@ -290,24 +285,36 @@ public class runClass {
     return false;
   }
 
-  public boolean handleblockincpaddlecollision(Rectangle blockincpaddle) {
+  private boolean handleblockincpaddlecollision(Rectangle blockincpaddle) {
     if (isIntersecting(myBouncer, blockincpaddle)) {
       bounceBallBricks(myBouncer, blockincpaddle);
       Score.updateScore(scorenumber, 100);
       removeBrick(blockincpaddle);
-      changingpaddlelengthconstant = changingpaddlelengthconstant * 1.04;
+      changingpaddlelengthconstant = changingpaddlelengthconstant * 1.05;
       myPaddle.setWidth(myPaddle.getWidth() * changingpaddlelengthconstant);
       return true;
     }
     return false;
   }
 
-  public boolean handleblockslowpaddlecollision(Rectangle blockslowpaddle) {
+  private boolean handleblockslowpaddlecollision(Rectangle blockslowpaddle) {
     if (isIntersecting(myBouncer, blockslowpaddle)) {
       bounceBallBricks(myBouncer, blockslowpaddle);
       Score.updateScore(scorenumber, 100);
       removeBrick(blockslowpaddle);
-      changingpaddlespeedconstant = changingpaddlespeedconstant * 0.20;
+      changingpaddlespeedconstant = changingpaddlespeedconstant * 0.90;
+      return true;
+    }
+    return false;
+  }
+
+  private boolean handleblockssolidcollision(Rectangle blocksolid) {
+    //these blocks add 0 points when hit and dont get destroyed
+    if (isIntersecting(myBouncer, blocksolid)) {
+      bounceBallBricks(myBouncer, blocksolid);
+      Score.updateScore(scorenumber, 0);
+      removeBrick(blocksolid);
+
       return true;
     }
     return false;
@@ -335,16 +342,21 @@ public class runClass {
       Cheats.toLeft();
     } else if (code == KeyCode.D) {
       Cheats.toRight();
+    } else if (code == KeyCode.DIGIT1) {
+      main.shiftLevel(1);
+    } else if (code == KeyCode.DIGIT2) {
+      main.shiftLevel(2);
+    } else if (code == KeyCode.DIGIT3) {
+      main.shiftLevel(3);
     }
+
   }
 
+  // TRIED USING MOUSE TO CONTROL PADDLE
   //    public void handlePaddlePosition(){
 //        Bounds bounds = root.localToScreen(root.getBoundsInLocal());
 //        double sceneXPos = 0;
-//
 //        double xPos = robot.getMouseX();
-//
-//
 //        if(xPos >= sceneXPos + (PADDLE_LENGTH/2) && xPos <= (sceneXPos +Main.SIZE) - (PADDLE_LENGTH/2)){
 //            myPaddle.setLayoutX(xPos - sceneXPos - (PADDLE_LENGTH/2));
 //        } else if (xPos < sceneXPos + (PADDLE_LENGTH/2)){
@@ -354,7 +366,13 @@ public class runClass {
 //            myPaddle.setLayoutX(Main.SIZE - PADDLE_LENGTH);
 //        }
 //    }
-  public void createBlock50(int xval, int yval) {
+
+  /**
+   * Creates large purple block, adds 50 when hit
+   * @param xval: xpos
+   * @param yval: ypos
+   */
+  private void createBlock50(int xval, int yval) {
     double width = Main.SIZE;
     double height = Main.SIZE;
 
@@ -365,7 +383,12 @@ public class runClass {
 
   }
 
-  public void createBlock100(int xval, int yval) {
+  /**
+   * Creates dark red block, adds 100 to points when hit
+   * @param xval: xpos
+   * @param yval:ypos
+   */
+  private void createBlock100(int xval, int yval) {
     double width = Main.SIZE;
     double height = Main.SIZE;
     int spaceCheck = 1;
@@ -376,68 +399,67 @@ public class runClass {
 
   }
 
-  public void createBlockBallSlow(int xval, int yval) {
-    double width = Main.SIZE;
-    double height = Main.SIZE;
-    int spaceCheck = 1;
+  /**
+   * Creates DarkGreen block, adds 100 points when hit and slows ball down
+   * @param xval:xpos
+   * @param yval:ypos
+   */
+  private void createBlockBallSlow(int xval, int yval) {
 
-    for (double i = height - (3 * height) / 5; i < height - (2 * height) / 5; i = i + 50) {
-      for (double j = width; j > 0; j = j - 25) {
-        if (spaceCheck % 2 == 0) {
-          Rectangle brick = new Rectangle(j, i, BLOCK100_SIZE, BLOCK100_SIZE);
-          brick.setFill(BLOCKBALLSLOW_COLOR);
-          root.getChildren().add(brick);
-          blocksballslow.add(brick);
-
-        }
-        spaceCheck++;
-      }
-    }
+    Rectangle brick = new Rectangle(xval, yval, BLOCK100_SIZE, BLOCK100_SIZE);
+    brick.setFill(BLOCKBALLSLOW_COLOR);
+    root.getChildren().add(brick);
+    blocksballslow.add(brick);
   }
 
-  public void createBlockIncPaddle(int xval, int yval) {
-    double width = Main.SIZE;
-    double height = Main.SIZE;
-    int spaceCheck = 1;
+  /**
+   * Creates Purple block, adds 100 when hit, and increases the length of the paddle
+   * @param xval: xpos
+   * @param yval : ypos
+   */
+  private void createBlockIncPaddle(int xval, int yval) {
 
-    for (double i = height - (2 * height) / 5; i < height - (3 * height) / 10; i = i + 50) {
-      for (double j = width; j > 0; j = j - 25) {
-        if (spaceCheck % 2 == 0) {
-          Rectangle brick = new Rectangle(j, i, BLOCKINCPADDLE_SIZE, BLOCKINCPADDLE_SIZE);
-          brick.setFill(BLOCKINCPADDLE_COLOR);
-          root.getChildren().add(brick);
-          blocksincpaddle.add(brick);
+    Rectangle brick = new Rectangle(xval, yval, BLOCKINCPADDLE_SIZE, BLOCKINCPADDLE_SIZE);
+    brick.setFill(BLOCKINCPADDLE_COLOR);
+    root.getChildren().add(brick);
+    blocksincpaddle.add(brick);
 
-        }
-        spaceCheck++;
-      }
-    }
   }
 
-  public void createBlockSlowPaddle(int xval, int yval) {
-    double width = Main.SIZE;
-    double height = Main.SIZE;
-    int spaceCheck = 1;
+  /**
+   * Creates Dark Cyan block, adds 100 pts when hit and slows paddle's speed
+   * @param xval: xpos
+   *
+   * @param yval: ypos
+   */
+  private void createBlockSlowPaddle(int xval, int yval) {
 
-    for (double i = height - (3 * height) / 10; i < height - (2.5 * height) / 10; i = i + 50) {
-      for (double j = width; j > 0; j = j - 25) {
-        if (spaceCheck % 2 == 0) {
-          Rectangle brick = new Rectangle(j, i, BLOCKSLOWPADDLE_SIZE, BLOCKSLOWPADDLE_SIZE);
-          brick.setFill(BLOCKSLOWPADDLE_COLOR);
-          root.getChildren().add(brick);
-          blocksslowpaddle.add(brick);
+    Rectangle brick = new Rectangle(xval, yval, BLOCKSLOWPADDLE_SIZE, BLOCKSLOWPADDLE_SIZE);
+    brick.setFill(BLOCKSLOWPADDLE_COLOR);
+    root.getChildren().add(brick);
+    blocksslowpaddle.add(brick);
 
-        }
-        spaceCheck++;
-      }
-    }
   }
 
-  public void removeBrick(Rectangle brick) {
+  /**
+   * Creates gray block that adds 0 pts when hit. only implemented in level 3.
+   * @param xval
+   * @param yval
+   */
+  private void createBlockSolid(int xval, int yval) {
+
+    Rectangle brick = new Rectangle(xval, yval, BLOCKSOLID_SIZE, BLOCKSOLID_SIZE);
+    brick.setFill(BLOCKSOLID_COLOR);
+    root.getChildren().add(brick);
+    blockssolid.add(brick);
+
+  }
+
+  private void removeBrick(Rectangle brick) {
     root.getChildren().remove(brick);
   }
 
-  public void removeBrickobj(Rectangleobj brick) {
+  private void removeBrickobj(Rectangleobj brick) {
     root.getChildren().remove(brick);
   }
 
@@ -445,11 +467,6 @@ public class runClass {
   private boolean isIntersecting(ImageView a, Rectangle b) {
     // with images can only check bounding box (as it is calculated in container with other objects)
     return b.getBoundsInParent().intersects(a.getBoundsInParent());
-    // with shapes, can check precisely (in this case, it is easy because the image is circular)
-//        Shape bouncerBounds = new Circle(a.getX() + a.getFitWidth() / 2,
-//                                       a.getY() + a.getFitHeight() / 2,
-//                                       a.getFitWidth() / 2 - BOUNCER_SIZE / 20);
-//        return ! Shape.intersect(bouncerBounds, b).getBoundsInLocal().isEmpty();
   }
 
   private boolean isIntersectingobj(ImageView a, Rectangleobj b) {
@@ -473,7 +490,7 @@ public class runClass {
       directionY = 1;
     }
   }
-
+  //method for bouncing rectangle object, didn't end up using
   private void bounceBallBricksobj(ImageView ball, Rectangleobj brick) {
     if (ball.getX() + BOUNCER_SIZE / 2 < brick.getX()) {
       directionX = -1;
@@ -490,20 +507,9 @@ public class runClass {
     else if (ball.getY() + BOUNCER_SIZE / 2 > brick.getY() + brick.getHeight()) {
       directionY = 1;
     }
-    //Add implementations to skip to next levels
-
   }
 
-  public static String readFileAsString(String fileName) throws Exception {
-    String data = "";
-    data = new String(Files.readAllBytes(Paths.get(fileName)));
-    return data;
-  }
-  public static String reader(String filename) throws Exception
-  {
-    String data = readFileAsString(filename);
-    return data;
-  }
+
 }
 
 

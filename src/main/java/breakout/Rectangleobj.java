@@ -2,7 +2,12 @@ package breakout;
 
 
 import javafx.scene.shape.Rectangle;
-//tried to use this class to make a different typf block that takes multiple hits before getting destroyed, but didnt end up using
+/**
+ *
+ *tried to use this class to make a different typf block that takes multiple hits before getting destroyed, but didnt end up using
+ * @author Haris Adnan
+ */
+//
 public class Rectangleobj {
 
   public static Rectangle Rect;

@@ -3,6 +3,8 @@ package breakout;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.paint.Paint;
+import javafx.scene.text.Text;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.application.Application;
@@ -16,8 +18,7 @@ import static breakout.runClass.livesremaining;
 
 
 /**
- * Feel free to completely change this code or delete it entirely.
- *
+ * Main Class for running program
  * @author Haris Adnan
  */
 public class Main extends Application {
@@ -25,24 +26,25 @@ public class Main extends Application {
   // useful names for constant values used
   public static final String TITLE = "Breakout Project";
   public static final int SIZE = 400;
-  public static final Paint BACKGROUND = Color.PEACHPUFF;
+  public static final Paint BACKGROUND = Color.DARKSLATEGRAY;
   public static final int FRAMES_PER_SECOND = 60;
   public static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
-
+  public static Text WINNING_MESSAGE;
   // instance variables
   private runClass myGame;
   private Timeline animation;
-
+  private Stage stage;
 
   /**
-   * Initialize what will be displayed.
+   * Initializes what will be displayed. stage is the window that is being set up
    */
   @Override
   public void start(Stage stage) {
     myGame = new runClass(this);
 
     // attach scene to the stage and display it
-    Scene scene = myGame.setupGame(SIZE, SIZE, BACKGROUND);
+    Scene scene = myGame.setupGame(SIZE, SIZE, BACKGROUND, 1);
+    this.stage = stage;
     stage.setScene(scene);
     stage.setTitle(TITLE);
     stage.show();
@@ -56,11 +58,26 @@ public class Main extends Application {
 
   }
 
-  public void stopanimation() {
-    if (Integer.parseInt(livesremaining.getText()) == 0) {
+  /**
+   * handles the shift of the level from one to another.
+   * @param level: new level to be set up.
+   */
+
+  public void shiftLevel(int level) {
+
+    //animation.stop();
+    if (level > 3) {
       animation.stop();
-      //scene = myGame.anotherfunction();
-      //stage.setScene()
+      WINNING_MESSAGE = new Text(40, SIZE / 2, "CONGRATULATIONS, YOU WON!");
+      WINNING_MESSAGE.setFill(Color.ANTIQUEWHITE);
+      WINNING_MESSAGE.setFont(new Font(20));
+      runClass.root.getChildren().add(WINNING_MESSAGE);
+
     }
+    Scene scene = myGame.setupGame(SIZE, SIZE, BACKGROUND, level);
+    this.stage.setScene(scene);
+
+
   }
+
 }
